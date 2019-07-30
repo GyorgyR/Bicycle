@@ -1,0 +1,25 @@
+<!doctype html>
+
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+
+  <title>Bicycle test</title>
+  <meta name="description" content="SPA in Handlebars, wut?">
+  <meta name="author" content="Gyorgy Rethy">
+
+  <script data-main="script/app" src="script/lib/require.js"></script>
+</head>
+
+<body>
+	<script type="text/javascript">
+		require.config({
+			paths: {
+				"handlebars.runtime": 'lib/handlebars.runtime',
+			}
+		});
+	</script>
+
+	<div id="app"></div>
+</body>
+</html>

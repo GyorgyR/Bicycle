@@ -1,0 +1,65 @@
+{
+  "name": "bicycle-frontend",
+  "version": "1.0.0",
+  "description": "SPA frontend in Handlebars, because why not.",
+  "scripts": {
+    "server": "live-server ./dist --no-browser",
+    "ts": "tsc",
+    "watch-ts": "npm-watch ts &",
+    "copy": "cp src/*.html src/*.ico dist",
+    "watch-copy": "npm-watch copy &",
+    "hbs": "for f in src/handlebars/*.hbs; do handlebars $f -f $f.js -m -a; done",
+    "watch-hbs": "npm-watch hbs",
+    "mkdirs": "mkdir -p dist/script && mkdir -p dist/handlebars",
+    "build": "npm run mkdirs && npm run copy && npm run hbs && npm run ts",
+    "start": "npm run watch-copy && npm run watch-ts && npm run server",
+    "stop": "killall node",
+    "clean": "rm -rf dist"
+  },
+  "watch": {
+    "ts": {
+      "patterns": [
+        "src/script"
+      ],
+      "extensions": "ts",
+      "quiet": false
+    },
+    "copy": {
+      "patterns": [
+        "src",
+        "src/script/lib"
+      ],
+      "extensions": "html,ico,js",
+      "quiet": false
+    },
+    "hbs": {
+      "patterns": [
+        "src/handlebars"
+      ],
+      "extensions": "hbs",
+      "quiet": false
+    }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/GyorgyR/Bicycle.git"
+  },
+  "keywords": [
+    "handlebars"
+  ],
+  "author": "Gyorgy Rethy",
+  "license": "GPL-2.0",
+  "bugs": {
+    "url": "https://github.com/GyorgyR/Bicycle/issues"
+  },
+  "devDependencies": {
+    "handlebars": "^4.1.2",
+    "live-server": "^1.2.1",
+    "npm-watch": "^0.6.0",
+    "tslib": "^1.10.0",
+    "typescript": "^3.5.3"
+  },
+  "dependencies": {
+    "@types/handlebars": "^4.1.0"
+  }
+}
