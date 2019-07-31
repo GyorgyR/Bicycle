@@ -15,6 +15,10 @@ export abstract class UiComponent {
         // @ts-ignore: decorator accesses this
         // I couldn't find a way to make the decorator run after the ctor
         if (!this.eventHandlers) this.eventHandlers = [];
+
+        let shadow = this.container.attachShadow({mode: 'open'});
+        this.container = document.createElement('div');
+        shadow.appendChild(this.container);
     }
 
     public setState(newState: any) {
@@ -26,41 +30,42 @@ export abstract class UiComponent {
         this.preRender();
         this.container.innerHTML = this.template(this.state);
         this.postRender();
-		this.bindAllHandlers();
+        this.bindAllHandlers();
     }
 
     public preRender(): void  {}
     public postRender(): void {}
 
     public addEventHandler(elementSelector: string, eventName: string, handler: (e: Event) => void) {
-        // Make sure if the ctor hasn't run yet (decorator), this still works
+        // Make sure if the extends hasn't run yet (decorator), this still works
         if (!this.eventHandlers) this.eventHandlers = [];
         let newHandler = {
-			selector: elementSelector,
-			eventName: eventName,
-			handlerFunc: handler
-		};
+            selector: elementSelector,
+            eventName: eventName,
+            handlerFunc: handler
+        };
         this.eventHandlers.push(newHandler);
+        // Bind now (if handler was added after render)
         this.bindEventHandler(newHandler);
     }
 
     private bindAllHandlers() {
-    	// Save reference to the object as closure later on overrides this
-    	const self = this;
-    	self.eventHandlers.forEach(function (handler: IUiEventHandler) {
-			self.bindEventHandler(handler);
-		})
-	}
+        // Save reference to the object as closure later on overrides this
+        const self = this;
+        self.eventHandlers.forEach(function (handler: IUiEventHandler) {
+            self.bindEventHandler(handler);
+        })
+    }
 
     private bindEventHandler(handlerObject: IUiEventHandler) {
-    	// If there is no container we can't add any events to it.
-    	if (!this.container) return;
+        // If there is no container we can't add any events to it.
+        if (!this.container) return;
 
-    	this.container.querySelectorAll<HTMLElement>(handlerObject.selector)
-			.forEach(function (element: HTMLElement) {
-			element.addEventListener(handlerObject.eventName, handlerObject.handlerFunc);
-		})
-	}
+        this.container.querySelectorAll<HTMLElement>(handlerObject.selector)
+            .forEach(function (element: HTMLElement) {
+                element.addEventListener(handlerObject.eventName, handlerObject.handlerFunc);
+            })
+    }
 }
 
 export function eventHandler(selector: string, event: string) {
@@ -68,4 +73,3 @@ export function eventHandler(selector: string, event: string) {
         target.addEventHandler(selector, event, descriptor.value);
     }
 }
-
