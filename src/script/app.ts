@@ -1,6 +1,7 @@
 // @ts-ignore: It does not recognize this as a module even tho it is (amd)
 import template = require('handlebars/app.hbs.js');
 import {eventHandler, UiComponent} from "./ui-component";
+import {NavBar} from "./navbar";
 namespace BikeApp {
     export function init(config: IAppConfig) {
         new App(document.getElementById('app') as HTMLElement, config);
@@ -15,6 +16,10 @@ namespace BikeApp {
             super(container, template, state);
 
             this.render();
+            new NavBar(
+                this.container.querySelector('#navbar-container') as HTMLElement,
+                {}
+                );
         }
 
         @eventHandler("button", "click")
