@@ -9,7 +9,7 @@ export abstract class UiComponent {
 
     protected constructor(
         protected container: HTMLElement,
-        protected template: any,
+        protected template: (context: any) => string,
         protected state: any
     ) {
         // @ts-ignore: decorator accesses this
@@ -23,13 +23,14 @@ export abstract class UiComponent {
     }
 
     public render() {
+        this.preRender();
         this.container.innerHTML = this.template(this.state);
-        this.afterRender();
+        this.postRender();
 		this.bindAllHandlers();
     }
 
-    public afterRender(): void {
-    }
+    public preRender(): void  {}
+    public postRender(): void {}
 
     public addEventHandler(elementSelector: string, eventName: string, handler: (e: Event) => void) {
         // Make sure if the ctor hasn't run yet (decorator), this still works

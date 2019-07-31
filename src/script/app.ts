@@ -3,7 +3,7 @@ import template = require('handlebars/app.hbs.js');
 import {eventHandler, UiComponent} from "./ui-component";
 namespace BikeApp {
 	export function init(config: IAppConfig) {
-		new App(<HTMLElement>document.getElementById('app'), config);
+		new App(document.getElementById('app') as HTMLElement, config);
 	}
 
 	interface IAppConfig {
