@@ -6,6 +6,7 @@ interface IUiEventHandler {
 
 export abstract class UiComponent {
     protected eventHandlers: IUiEventHandler[];
+    protected lastRenderedState: any;
 
     protected constructor(
         protected container: HTMLElement,
@@ -19,6 +20,8 @@ export abstract class UiComponent {
         let shadow = this.container.attachShadow({mode: 'open'});
         this.container = document.createElement('div');
         shadow.appendChild(this.container);
+
+        this.lastRenderedState = {};
     }
 
     public setState(newState: any) {
@@ -27,6 +30,9 @@ export abstract class UiComponent {
     }
 
     public render() {
+        // Prevent rendering if the state did not change
+        if (this.lastRenderedState === this.state) return;
+
         this.preRender();
         this.container.innerHTML = this.template(this.state);
         this.postRender();
