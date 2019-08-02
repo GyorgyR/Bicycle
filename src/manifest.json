@@ -1,0 +1,17 @@
+{
+  "short_name": "Bike",
+  "name": "Bicycle test",
+  "icons": [
+    {
+      "src": "/favicon.ico",
+      "type": "image/ico",
+      "sizes": "16x16"
+    }
+  ],
+  "start_url": "/",
+  "display": "minimal-ui",
+  "scope": "/",
+  "background_color": "#c5c7c7",
+  "theme_color": "#0040ff",
+  "serviceworker": { "src":  "./worker.js" }
+}

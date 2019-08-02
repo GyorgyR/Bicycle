@@ -8,6 +8,7 @@
   <meta name="description" content="SPA in Handlebars, wut?">
   <meta name="author" content="Gyorgy Rethy">
 
+  <link rel="manifest" href="/manifest.json">
   <script data-main="script/app" src="script/lib/require.min.js"></script>
 </head>
 
@@ -21,5 +22,10 @@
 	</script>
 
 	<div id="app"></div>
+    <script>
+        if('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('/worker.js')
+        }
+    </script>
 </body>
 </html>
