@@ -18,12 +18,7 @@ export abstract class UiComponent {
         if (!this.eventHandlers) this.eventHandlers = [];
 
         let shadow: ShadowRoot;
-        if (!this.container.shadowRoot) {
-            shadow = this.container.attachShadow({mode: 'open'});
-        } else {
-            shadow = this.container.shadowRoot;
-            shadow.innerHTML = "";
-        }
+        shadow = this.container.attachShadow({mode: 'open'});
         this.container = document.createElement('div');
         shadow.appendChild(this.container);
 
@@ -37,12 +32,17 @@ export abstract class UiComponent {
 
     public render() {
         // Prevent rendering if the state did not change
-        if (this.lastRenderedState === this.state) return;
+        if (this.lastRenderedState == this.state) return;
+        this.lastRenderedState = this.state;
 
         this.preRender();
         this.container.innerHTML = this.template(this.state);
         this.postRender();
         this.bindAllHandlers();
+    }
+
+    protected getElement(selector: string): HTMLElement {
+        return this.container.querySelector(selector) as HTMLElement;
     }
 
     public preRender(): void  {}
@@ -71,11 +71,12 @@ export abstract class UiComponent {
 
     private bindEventHandler(handlerObject: IUiEventHandler) {
         // If there is no container we can't add any events to it.
-        if (!this.container) return;
+        const self = this;
+        if (!self.container) return;
 
-        this.container.querySelectorAll<HTMLElement>(handlerObject.selector)
+        self.container.querySelectorAll<HTMLElement>(handlerObject.selector)
             .forEach(function (element: HTMLElement) {
-                element.addEventListener(handlerObject.eventName, handlerObject.handlerFunc);
+                element.addEventListener(handlerObject.eventName, handlerObject.handlerFunc.bind(self));
             })
     }
 }

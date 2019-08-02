@@ -4,7 +4,8 @@ import {eventHandler, UiComponent} from "./ui-component";
 import {NavBar, INavBarConfig} from "./navbar";
 namespace BikeApp {
     export function init(config: IAppConfig) {
-        new App(document.getElementById('app') as HTMLElement, config);
+        let app = new App(document.getElementById('app') as HTMLElement, config);
+        getAppConfig('/app-config.json', app.setState.bind(app));
     }
 
     interface IAppConfig {
@@ -13,14 +14,23 @@ namespace BikeApp {
     }
 
     class App extends UiComponent {
+        navBar: NavBar | undefined;
+        state!: IAppConfig;
         constructor(container: HTMLElement, state: IAppConfig) {
             super(container, template, state);
 
             this.render();
-            new NavBar(
-                this.container.querySelector('#navbar-container') as HTMLElement,
+        }
+
+        postRender(): void {
+            // Make sure the object is not referenced anymore and GC will reclaim it
+            delete this.navBar;
+
+            // Recreate nav bar with new container
+            this.navBar = new NavBar(
+                this.getElement('#navbar-container'),
                 this.state.navbar
-                );
+            );
         }
 
         @eventHandler("button", "click")
@@ -28,7 +38,7 @@ namespace BikeApp {
             console.log('click');
         }
     }
-    export function getAppConfig(url: string, callback: (data: IAppConfig)=>void): void {
+    function getAppConfig(url: string, callback: (data: IAppConfig)=>void): void {
         let xhr = new XMLHttpRequest();
         xhr.open('GET', url);
         xhr.onload = function () {
@@ -45,5 +55,4 @@ namespace BikeApp {
 }
 
 BikeApp.init({"description": "", navbar: {options: []}});
-BikeApp.getAppConfig('http://localhost:8080/app-config.json', BikeApp.init);
 
