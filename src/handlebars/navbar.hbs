@@ -1,21 +1,36 @@
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
 <style>
-    .navbar {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        background-color: aqua;
-        display: flex;
-    }
-    .nav-menu {
-        display: inline-block;
-
-    }
-    .nav-menu:hover {
-        background-color: aliceblue;
-    }
+  .navbar {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    display: flex;
+  }
+  .nav-menu {
+    display: inline-block;
+    margin: 0.1rem 0.2rem;
+    position: relative;
+  }
+  .nav-menu::before {
+    content: "";
+    height: 1px;
+    width: 0;
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translate(-50%, 0);
+    -webkit-transition: all 0.2s ease-out;
+    -moz-transition: all 0.2s ease-out;
+    transition: all 0.2s ease-out;
+  }
+  .nav-menu:hover:before {
+    background-color: #40c4ff;
+    width: 80%;
+  }
 </style>
-<div class="navbar">
-    <div class="nav-menu">Option1</div>
-    <div class="nav-menu">Option2</div>
+<div class="navbar grey darken-4 light-blue-text text-lighten-5">
+  {{#each options}}
+    <div class="nav-menu">{{name}}</div>
+  {{/each}}
 </div>

@@ -2,6 +2,14 @@
 import template = require('handlebars/navbar.hbs.js');
 import {UiComponent} from "./ui-component";
 
+export interface INavBarConfig {
+    options: IOptionConfig[];
+}
+
+interface IOptionConfig {
+    name: string;
+}
+
 export class NavBar extends UiComponent {
     constructor(container: HTMLElement, state: any) {
         super(container, template, state);

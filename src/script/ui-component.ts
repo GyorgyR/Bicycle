@@ -17,7 +17,13 @@ export abstract class UiComponent {
         // I couldn't find a way to make the decorator run after the ctor
         if (!this.eventHandlers) this.eventHandlers = [];
 
-        let shadow = this.container.attachShadow({mode: 'open'});
+        let shadow: ShadowRoot;
+        if (!this.container.shadowRoot) {
+            shadow = this.container.attachShadow({mode: 'open'});
+        } else {
+            shadow = this.container.shadowRoot;
+            shadow.innerHTML = "";
+        }
         this.container = document.createElement('div');
         shadow.appendChild(this.container);
 

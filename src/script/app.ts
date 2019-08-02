@@ -1,7 +1,7 @@
 // @ts-ignore: It does not recognize this as a module even tho it is (amd)
 import template = require('handlebars/app.hbs.js');
 import {eventHandler, UiComponent} from "./ui-component";
-import {NavBar} from "./navbar";
+import {NavBar, INavBarConfig} from "./navbar";
 namespace BikeApp {
     export function init(config: IAppConfig) {
         new App(document.getElementById('app') as HTMLElement, config);
@@ -9,6 +9,7 @@ namespace BikeApp {
 
     interface IAppConfig {
         description: string;
+        navbar: INavBarConfig;
     }
 
     class App extends UiComponent {
@@ -18,7 +19,7 @@ namespace BikeApp {
             this.render();
             new NavBar(
                 this.container.querySelector('#navbar-container') as HTMLElement,
-                {}
+                this.state.navbar
                 );
         }
 
@@ -27,6 +28,22 @@ namespace BikeApp {
             console.log('click');
         }
     }
+    export function getAppConfig(url: string, callback: (data: IAppConfig)=>void): void {
+        let xhr = new XMLHttpRequest();
+        xhr.open('GET', url);
+        xhr.onload = function () {
+            if (xhr.status === 200) {
+                callback(JSON.parse(xhr.responseText));
+            }
+            else {
+                console.error('Failed to get app config', xhr.status);
+                throw Error('Cannot init app with app config');
+            }
+        };
+        xhr.send();
+    }
 }
-BikeApp.init({description: 'This is a test to see how painful it would be to create an SPA with handlebars.'});
+
+BikeApp.init({"description": "", navbar: {options: []}});
+BikeApp.getAppConfig('http://localhost:8080/app-config.json', BikeApp.init);
 

@@ -9,23 +9,39 @@
   <meta name="author" content="Gyorgy Rethy">
 
   <link rel="manifest" href="/manifest.json">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
   <script data-main="script/app" src="script/lib/require.min.js"></script>
+
+  <style>
+    .view-port {
+      min-width: 100vw;
+      min-height: 100vh;
+      position: absolute;
+    }
+  </style>
 </head>
 
 <body>
-	<script type="text/javascript">
-		require.config({
-			paths: {
-				"handlebars.runtime": 'lib/handlebars.runtime.min',
-			}
-		});
-	</script>
 
-	<div id="app"></div>
-    <script>
-        if('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('/worker.js')
+<!-- RequireJS config -->
+<script type="text/javascript">
+    require.config({
+        paths: {
+            "handlebars.runtime": 'lib/handlebars.runtime.min',
         }
-    </script>
+    });
+</script>
+
+<!-- App container div -->
+<div id="app" class="view-port blue-grey darken-4 grey-text text-lighten-2"></div>
+
+<!-- Service Worker registration -->
+<script>
+    const isProd = false;
+    if('serviceWorker' in navigator && isProd) {
+        navigator.serviceWorker.register('/worker.js')
+    }
+</script>
+
 </body>
 </html>
