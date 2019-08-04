@@ -4,8 +4,8 @@ import {eventHandler, UiComponent} from "./ui-component";
 import {INavBarConfig, NavBar} from "./navbar";
 
 namespace BikeApp {
-    export function init(config: IAppConfig) {
-        let app = new App(getAppContainer, config);
+    export function init() {
+        let app = new App(getAppContainer, null);
         getAppConfig('/app-config.json', app.setState.bind(app));
     }
 
@@ -19,21 +19,32 @@ namespace BikeApp {
     }
 
     class App extends UiComponent {
-        navBar: NavBar;
-        state!: IAppConfig;
+        navBar: NavBar | null;
+        state!: IAppConfig | null;
 
-        constructor(containerGen: () => HTMLElement, state: IAppConfig) {
+        constructor(containerGen: () => HTMLElement, state: IAppConfig | null) {
             super(containerGen, template, state);
 
-            this.render();
-            this.navBar = new NavBar(
+            this.navBar = (this.state) ? new NavBar(
                 () => this.getElement('#navbar-container'),
                 this.state.navbar
+            ) : null;
+
+            this.render();
+        }
+
+        setState(newState: IAppConfig) {
+            super.setState(newState);
+            if (!this.navBar) this.navBar = new NavBar(
+                () => this.getElement('#navbar-container'),
+                newState.navbar
             );
         }
 
-        postRender(): void {
-            if (this.navBar) {
+        render(): void {
+            super.render();
+
+            if (this.navBar && this.state) {
                 this.navBar.setState(this.state.navbar);
                 this.navBar.render();
             }
@@ -41,7 +52,7 @@ namespace BikeApp {
 
         @eventHandler("button", "click")
         handleClick(e: Event) {
-            console.log('click');
+            console.log('click', e);
         }
     }
     function getAppConfig(url: string, callback: (data: IAppConfig)=>void): void {
@@ -60,5 +71,5 @@ namespace BikeApp {
     }
 }
 
-BikeApp.init({"description": "", navbar: {options: []}});
+BikeApp.init();
 
