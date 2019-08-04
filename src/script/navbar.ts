@@ -11,8 +11,8 @@ interface IOptionConfig {
 }
 
 export class NavBar extends UiComponent {
-    constructor(container: HTMLElement, state: any) {
-        super(container, template, state);
+    constructor(containerGen: () => HTMLElement, state: any) {
+        super(containerGen, template, state);
 
         this.render();
     }

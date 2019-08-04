@@ -7,9 +7,10 @@ interface IUiEventHandler {
 export abstract class UiComponent {
     protected eventHandlers: IUiEventHandler[];
     protected lastRenderedState: any;
+    protected shadowContainer!: HTMLElement;
 
     protected constructor(
-        protected container: HTMLElement,
+        protected containerGenerator: () => HTMLElement,
         protected template: (context: any) => string,
         protected state: any
     ) {
@@ -17,12 +18,21 @@ export abstract class UiComponent {
         // I couldn't find a way to make the decorator run after the ctor
         if (!this.eventHandlers) this.eventHandlers = [];
 
-        let shadow: ShadowRoot;
-        shadow = this.container.attachShadow({mode: 'open'});
-        this.container = document.createElement('div');
-        shadow.appendChild(this.container);
+        this.createShadowContainer();
 
         this.lastRenderedState = {};
+    }
+
+    public render() {
+        // Make sure there is a container to render into
+        if (!this.shadowContainer.isConnected) this.createShadowContainer();
+
+        this.lastRenderedState = this.state;
+
+        this.preRender();
+        this.shadowContainer.innerHTML = this.template(this.state);
+        this.postRender();
+        this.bindAllHandlers();
     }
 
     public setState(newState: any) {
@@ -30,19 +40,15 @@ export abstract class UiComponent {
         this.render();
     }
 
-    public render() {
-        // Prevent rendering if the state did not change
-        if (this.lastRenderedState == this.state) return;
-        this.lastRenderedState = this.state;
-
-        this.preRender();
-        this.container.innerHTML = this.template(this.state);
-        this.postRender();
-        this.bindAllHandlers();
+    protected getElement(selector: string): HTMLElement {
+        return this.shadowContainer.querySelector(selector) as HTMLElement;
     }
 
-    protected getElement(selector: string): HTMLElement {
-        return this.container.querySelector(selector) as HTMLElement;
+    private createShadowContainer() {
+        let shadow: ShadowRoot;
+        shadow = this.containerGenerator().attachShadow({mode: 'open'});
+        this.shadowContainer = document.createElement('div');
+        shadow.appendChild(this.shadowContainer);
     }
 
     public preRender(): void  {}
@@ -72,9 +78,9 @@ export abstract class UiComponent {
     private bindEventHandler(handlerObject: IUiEventHandler) {
         // If there is no container we can't add any events to it.
         const self = this;
-        if (!self.container) return;
+        if (!self.shadowContainer) return;
 
-        self.container.querySelectorAll<HTMLElement>(handlerObject.selector)
+        self.shadowContainer.querySelectorAll<HTMLElement>(handlerObject.selector)
             .forEach(function (element: HTMLElement) {
                 element.addEventListener(handlerObject.eventName, handlerObject.handlerFunc.bind(self));
             })
