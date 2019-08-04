@@ -6,7 +6,7 @@ interface IUiEventHandler {
 
 export abstract class UiComponent {
     protected eventHandlers: IUiEventHandler[];
-    protected container!: HTMLElement;
+    protected shadowRoot!: ShadowRoot;
     protected lastRenderedState: any;
 
     protected constructor(
@@ -27,8 +27,8 @@ export abstract class UiComponent {
         let didChangeState = this.lastRenderedState != this.state;
 
         // Make sure there is a container to render into
-        if (!this.container.isConnected) {
-            let oldContainer = this.container;
+        if (!this.shadowRoot.isConnected) {
+            let oldContainer = this.shadowRoot;
             this.createShadowContainer();
         }
 
@@ -36,7 +36,7 @@ export abstract class UiComponent {
         if (!didChangeState) return;
         this.lastRenderedState = this.state;
 
-        this.container.innerHTML = this.template(this.state);
+        this.shadowRoot.innerHTML = this.template(this.state);
         this.bindAllHandlers();
     }
 
@@ -46,15 +46,13 @@ export abstract class UiComponent {
     }
 
     protected getElement(selector: string): HTMLElement {
-        return this.container.querySelector(selector) as HTMLElement;
+        return this.shadowRoot.querySelector(selector) as HTMLElement;
     }
 
     private createShadowContainer() {
-        let shadow: ShadowRoot;
-        shadow = this.containerGenerator().attachShadow({mode: 'open'});
-        // If we don't have a container from a previous operations create one
-        if (!this.container) this.container = document.createElement('div');
-        shadow.appendChild(this.container);
+        let shadow = this.containerGenerator().attachShadow({mode: 'open'});
+        if (this.shadowRoot) shadow.innerHTML = this.shadowRoot.innerHTML;
+        this.shadowRoot = shadow;
     }
 
     public addEventHandler(elementSelector: string, eventName: string, handler: (e: Event) => void) {
@@ -81,17 +79,23 @@ export abstract class UiComponent {
     private bindEventHandler(handlerObject: IUiEventHandler) {
         // If there is no container we can't add any events to it.
         const self = this;
-        if (!self.container) return;
+        if (!self.shadowRoot) return;
 
-        self.container.querySelectorAll<HTMLElement>(handlerObject.selector)
+        self.shadowRoot.querySelectorAll<HTMLElement>(handlerObject.selector)
             .forEach(function (element: HTMLElement) {
-                element.addEventListener(handlerObject.eventName, handlerObject.handlerFunc.bind(self));
+                element.addEventListener(
+                    handlerObject.eventName,
+                    handlerObject.handlerFunc.bind(self)
+                );
             })
     }
 }
 
 export function eventHandler(selector: string, event: string) {
-    return function (target: UiComponent, key: string | symbol, descriptor: PropertyDescriptor) {
+    return function (
+        target: UiComponent,
+        key: string | symbol,
+        descriptor: PropertyDescriptor) {
         target.addEventHandler(selector, event, descriptor.value);
     }
 }
