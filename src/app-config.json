@@ -1,6 +1,7 @@
 {
   "description": "This is a test to see how painful it would be to create an SPA with handlebars.",
   "navbar": {
+    "title": "Bike Test",
     "options": [
       {"name": "Option1"},
       {"name": "Option2"},

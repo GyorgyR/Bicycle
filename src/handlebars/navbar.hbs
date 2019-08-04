@@ -1,16 +1,34 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
 <style>
   .navbar {
-    position: absolute;
     top: 0;
     left: 0;
     width: 100%;
     display: flex;
+    position: sticky;
+  }
+
+  .navigation {
+    width: 100%;
+    margin: 1rem 0.8rem;
+  }
+
+  .nav-title {
+    font-size: 16px;
+    display: inline-block;
+    cursor: default;
+  }
+
+  .nav-options {
+    float: right;
   }
   .nav-menu {
     display: inline-block;
     margin: 0.1rem 0.2rem;
     position: relative;
+    flex-grow: 1;
+    text-align: center;
+    cursor: pointer;
   }
   .nav-menu::before {
     content: "";
@@ -19,18 +37,26 @@
     position: absolute;
     top: 0;
     left: 50%;
+    background-color: #40c4ff;
     transform: translate(-50%, 0);
     -webkit-transition: all 0.2s ease-out;
     -moz-transition: all 0.2s ease-out;
     transition: all 0.2s ease-out;
   }
+
+  .nav-menu.active:before,
   .nav-menu:hover:before {
-    background-color: #40c4ff;
     width: 80%;
   }
 </style>
-<div class="navbar grey darken-4 light-blue-text text-lighten-5">
-  {{#each options}}
-    <div class="nav-menu">{{name}}</div>
-  {{/each}}
-</div>
+<header class="navbar grey darken-4 light-blue-text text-lighten-5">
+  <section class="navigation">
+    <div class="nav-title">{{title}}</div>
+    <div class="nav-options">
+      {{#each options}}
+        <div class="nav-menu">{{name}}</div>
+      {{/each}}
+    </div>
+  </section>
+  <section id="selected-option"></section>
+</header>

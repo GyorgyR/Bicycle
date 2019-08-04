@@ -3,6 +3,7 @@ import template = require('handlebars/navbar.hbs.js');
 import {UiComponent} from "./ui-component";
 
 export interface INavBarConfig {
+    title: string;
     options: IOptionConfig[];
 }
 
