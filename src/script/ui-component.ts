@@ -30,12 +30,6 @@ export abstract class UiComponent {
         if (!this.container.isConnected) {
             let oldContainer = this.container;
             this.createShadowContainer();
-
-            // If we are just re-rendering copy over from old container
-            if (!didChangeState) {
-                this.container.innerHTML = oldContainer.innerHTML;
-                return;
-            }
         }
 
         // If no new container and no new state don't do anything
@@ -58,7 +52,8 @@ export abstract class UiComponent {
     private createShadowContainer() {
         let shadow: ShadowRoot;
         shadow = this.containerGenerator().attachShadow({mode: 'open'});
-        this.container = document.createElement('div');
+        // If we don't have a container from a previous operations create one
+        if (!this.container) this.container = document.createElement('div');
         shadow.appendChild(this.container);
     }
 
