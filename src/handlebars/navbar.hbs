@@ -3,14 +3,15 @@
   .navbar {
     top: 0;
     left: 0;
-    width: 100%;
-    display: flex;
+    width: 100vw;
     position: sticky;
   }
 
   .navigation {
     width: 100%;
-    margin: 1rem 0.8rem;
+    display: flex;
+    padding: 1rem 0.8rem;
+    box-sizing: border-box;
   }
 
   .nav-title {
@@ -20,11 +21,11 @@
   }
 
   .nav-options {
-    float: right;
+    margin-left: auto;
   }
   .nav-menu {
     display: inline-block;
-    margin: 0.1rem 0.2rem;
+    margin: 0 0.2rem;
     position: relative;
     flex-grow: 1;
     text-align: center;
@@ -39,14 +40,26 @@
     left: 50%;
     background-color: #40c4ff;
     transform: translate(-50%, 0);
-    -webkit-transition: all 0.2s ease-out;
-    -moz-transition: all 0.2s ease-out;
     transition: all 0.2s ease-out;
+  }
+
+  .nav-menu.was-active:before {
+    animation: slide-out 0.2s ease-out;
   }
 
   .nav-menu.active:before,
   .nav-menu:hover:before {
     width: 80%;
+    animation: 0;
+  }
+
+  @keyframes slide-out {
+    0% {
+      width: 80%;
+    }
+    100% {
+      width: 0;
+    }
   }
 </style>
 <header class="navbar grey darken-4 light-blue-text text-lighten-5">

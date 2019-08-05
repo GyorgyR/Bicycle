@@ -36,8 +36,14 @@ export abstract class UiComponent {
         if (!value) {
             this._state = value;
         } else {
-            this._state = new Proxy(value, {
-                get: (target, p) => Reflect.get(target, p),
+            let pHandler = {
+                get: (target, p) => {
+                    let retVal = Reflect.get(target, p);
+                    if (typeof retVal == 'object' && retVal != null) {
+                        return new Proxy(retVal, pHandler);
+                    }
+                    return retVal;
+                },
                 set: (target, p, value) => {
                     const newState = Reflect.set(target, p, value);
                     this.onStateChange();
@@ -45,7 +51,8 @@ export abstract class UiComponent {
                     this.render();
                     return newState;
                 }
-            });
+            };
+            this._state = new Proxy(value, pHandler);
         }
         this.render();
     }
@@ -88,7 +95,7 @@ export abstract class UiComponent {
     public onStateChange() {
     }
 
-    protected render() {
+    public render() {
         if (!this.shadowRoot) return;
         //if (!this.isDirty) return;
         this.isDirty = false;
