@@ -30,12 +30,13 @@ namespace BikeApp {
             this.render();
         }
 
-        setState(newState: IAppConfig) {
-            super.setState(newState);
-            if (!this.navBar) this.navBar = new NavBar(
-                () => this.getElement('#navbar-container'),
-                newState.navbar
-            );
+        onStateChange() {
+            if (!this.navBar && this.state) {
+                this.navBar = new NavBar(
+                    () => this.getElement('#navbar-container'),
+                    this.state.navbar
+                );
+            }
         }
 
         render(): void {
