@@ -5,12 +5,9 @@ import {INavBarConfig, NavBar} from "./navbar";
 
 namespace BikeApp {
     export function init() {
-        let app = new App(getAppContainer, null);
-        getAppConfig('/app-config.json', app.setState.bind(app));
-    }
-
-    function getAppContainer(): HTMLElement {
-        return document.getElementById('app') as HTMLElement;
+        let app = new App(
+            document.getElementById('app') as HTMLElement, null);
+        app.downloadStateFrom('/app-config.json').then();
     }
 
     interface IAppConfig {
@@ -22,8 +19,8 @@ namespace BikeApp {
         navBar: NavBar | null;
         state!: IAppConfig | null;
 
-        constructor(containerGen: () => HTMLElement, state: IAppConfig | null) {
-            super(containerGen, template, state);
+        constructor(container: HTMLElement, state: IAppConfig | null) {
+            super(() => container, template, state);
 
             this.navBar = (this.state) ? new NavBar(
                 () => this.getElement('#navbar-container'),
@@ -54,20 +51,6 @@ namespace BikeApp {
         handleClick(e: Event) {
             console.log('click', e);
         }
-    }
-    function getAppConfig(url: string, callback: (data: IAppConfig)=>void): void {
-        let xhr = new XMLHttpRequest();
-        xhr.open('GET', url);
-        xhr.onload = function () {
-            if (xhr.status === 200) {
-                callback(JSON.parse(xhr.responseText));
-            }
-            else {
-                console.error('Failed to get app config', xhr.status);
-                throw Error('Cannot init app with app config');
-            }
-        };
-        xhr.send();
     }
 }
 

@@ -45,16 +45,6 @@ export abstract class UiComponent {
         this.render();
     }
 
-    protected getElement(selector: string): HTMLElement {
-        return this.shadowRoot.querySelector(selector) as HTMLElement;
-    }
-
-    private createShadowContainer() {
-        let shadow = this.containerGenerator().attachShadow({mode: 'open'});
-        if (this.shadowRoot) shadow.innerHTML = this.shadowRoot.innerHTML;
-        this.shadowRoot = shadow;
-    }
-
     public addEventHandler(elementSelector: string, eventName: string, handler: (e: Event) => void) {
         // Make sure if the extends hasn't run yet (decorator), this still works
         if (!this.eventHandlers) this.eventHandlers = [];
@@ -66,6 +56,34 @@ export abstract class UiComponent {
         this.eventHandlers.push(newHandler);
         // Bind now (if handler was added after render)
         this.bindEventHandler(newHandler);
+    }
+
+    public downloadStateFrom(url: string): Promise<void> {
+        const self = this;
+        return new Promise<void>(function (resolve, reject) {
+            let xhr = new XMLHttpRequest();
+            xhr.open('GET', url);
+            xhr.onload = function () {
+                if (xhr.status === 200) {
+                    self.setState(JSON.parse(xhr.responseText));
+                    resolve();
+                } else {
+                    reject(
+                        `Failed to get state for${self.constructor.name} from: ${url} returned ${xhr.status}`);
+                }
+            };
+            xhr.send();
+        });
+    }
+
+    protected getElement(selector: string): HTMLElement {
+        return this.shadowRoot.querySelector(selector) as HTMLElement;
+    }
+
+    private createShadowContainer() {
+        let shadow = this.containerGenerator().attachShadow({mode: 'open'});
+        if (this.shadowRoot) shadow.innerHTML = this.shadowRoot.innerHTML;
+        this.shadowRoot = shadow;
     }
 
     private bindAllHandlers() {
