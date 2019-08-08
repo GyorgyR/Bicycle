@@ -26,7 +26,7 @@ export class NavBar extends UiComponent {
             .getAttribute('data-option');
         let activeList: INavOptionState | null = null;
 
-        this.state
+        this.setBatchState(() => this.state
             .options
             .forEach((option) => {
                 option.wasActive = option.isActive;
@@ -36,7 +36,8 @@ export class NavBar extends UiComponent {
                 } else {
                     option.isActive = false;
                 }
-            });
+            })
+        );
 
         this.navOption.setState(activeList);
     }

@@ -1,4 +1,6 @@
-
+/*****************************************************
+ *                  THE FRAMEWORK
+ *****************************************************/
 interface IUiEventHandler {
     selector: string;
     eventName: string;
@@ -9,6 +11,7 @@ export abstract class UiComponent {
     protected eventHandlers: IUiEventHandler[];
     protected shadowRoot!: ShadowRoot;
     protected isDirty: boolean;
+    private watchState: boolean;
 
     protected constructor(
         protected containerGenerator: () => HTMLElement,
@@ -20,9 +23,16 @@ export abstract class UiComponent {
         if (!this.eventHandlers) this.eventHandlers = [];
 
         this.createShadowContainer();
+        new MutationObserver(() => {
+            this.createShadowContainer();
+        }).observe(
+            <Node>this.containerGenerator().parentNode,
+            {childList: true}
+        );
 
         if (!state) state = {};
         this.isDirty = true;
+        this.watchState = true;
         this.state = state;
     }
 
@@ -46,19 +56,29 @@ export abstract class UiComponent {
                 },
                 set: (target, p, value) => {
                     const newState = Reflect.set(target, p, value);
-                    this.onStateChange();
                     this.isDirty = true;
-                    this.render();
+                    if (this.watchState) {
+                        this.onStateChange();
+                        this.render();
+                    }
                     return newState;
                 }
             };
             this._state = new Proxy(value, pHandler);
         }
-        this.render();
+        this.isDirty = true;
+        if (this.watchState) this.render();
     }
 
     public setState(newState: any) {
         this.state = newState;
+    }
+
+    public setBatchState(operations: Function): void {
+        this.watchState = false;
+        operations();
+        this.render();
+        this.watchState = true;
     }
 
     public addEventHandler(elementSelector: string, eventName: string, handler: (e: Event) => void) {
@@ -97,7 +117,7 @@ export abstract class UiComponent {
 
     public render() {
         if (!this.shadowRoot) return;
-        //if (!this.isDirty) return;
+        if (!this.isDirty) return;
         this.isDirty = false;
 
         // Make sure there is a container to render into
@@ -115,15 +135,19 @@ export abstract class UiComponent {
 
     private createShadowContainer() {
         let container = this.containerGenerator();
-        if (container) {
+        if (container && !container.shadowRoot) {
+            let copyContents: boolean = !!(this.shadowRoot);
+
             let shadow = container.attachShadow({mode: 'open'});
-            if (this.shadowRoot) shadow.innerHTML = this.shadowRoot.innerHTML;
+            if (copyContents) shadow.innerHTML = this.shadowRoot.innerHTML;
             this.shadowRoot = shadow;
+
+            if (copyContents) this.bindAllHandlers();
         }
     }
 
     private bindAllHandlers() {
-        // Save reference to the object as closure later on overrides this
+        // Save reference to the object as closure later on overrides "this"
         const self = this;
         self.eventHandlers.forEach(function (handler: IUiEventHandler) {
             self.bindEventHandler(handler);
