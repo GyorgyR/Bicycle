@@ -41,4 +41,9 @@ export class NavBar extends UiComponent {
 
         this.navOption.setState(activeList);
     }
+
+    @eventHandler('div.nav-menu', 'animationend')
+    private removeWasAnim(e: Event) {
+        (e.target as HTMLElement).classList.remove('was-active');
+    }
 }
