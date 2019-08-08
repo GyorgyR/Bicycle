@@ -1,6 +1,7 @@
 // @ts-ignore: It does not recognize this as a module even tho it is (amd)
 import template = require('handlebars/navbar.hbs.js');
-import {UiComponent} from "./ui-component";
+import {eventHandler, UiComponent} from "./ui-component";
+import {INavOptionState, NavOption} from "./navoption";
 
 export interface INavBarConfig {
     title: string;
@@ -9,9 +10,16 @@ export interface INavBarConfig {
 
 interface IOptionConfig {
     name: string;
+    list: INavOptionState;
+    isActive: boolean;
+    wasActive: boolean;
 }
 
 export class NavBar extends UiComponent {
+    state!: INavBarConfig;
+    protected navOption: NavOption;
+    private readonly optionSelector: string = 'section#selected-option';
+
     constructor(containerGen: () => HTMLElement, state: any) {
         super(containerGen, template, state);
 
@@ -40,5 +48,10 @@ export class NavBar extends UiComponent {
         );
 
         this.navOption.setState(activeList);
+    }
+
+    @eventHandler('div.nav-menu', 'animationend')
+    private removeWasAnim(e: Event) {
+        (e.target as HTMLElement).classList.remove('was-active');
     }
 }

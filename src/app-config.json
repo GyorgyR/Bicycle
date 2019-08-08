@@ -3,9 +3,53 @@
   "navbar": {
     "title": "Bike Test",
     "options": [
-      {"name": "Option1"},
+      {
+        "name": "Option1",
+        "list": {
+          "navOptions": [
+            {
+              "optionName": "This is one option",
+              "optionLink": ""
+            },
+            {
+              "optionName": "This is another option",
+              "optionLink": ""
+            },
+            {
+              "optionName": "This is yet another option",
+              "optionLink": ""
+            },
+            {
+              "optionName": "This is the third option",
+              "optionLink": ""
+            }
+          ]
+        }
+      },
       {"name": "Option2"},
-      {"name": "Option3"},
+      {
+        "name": "Option3",
+        "list": {
+          "navOptions": [
+            {
+              "optionName": "This is some option",
+              "optionLink": ""
+            },
+            {
+              "optionName": "This is some other option",
+              "optionLink": ""
+            },
+            {
+              "optionName": "This is yet some other option",
+              "optionLink": ""
+            },
+            {
+              "optionName": "This is the last option",
+              "optionLink": ""
+            }
+          ]
+        }
+      },
       {"name": "Option4"}
     ]
   }

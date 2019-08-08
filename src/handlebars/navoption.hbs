@@ -1,4 +1,21 @@
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
 <style>
+  #options-container {
+    overflow-y: hidden;
+    animation: slide-down 0.4s ease-in;
+  }
+
+  @keyframes slide-down {
+    0% {
+      max-height: 0;
+    }
+    100% {
+      max-height: 100vh;
+    }
+  }
 </style>
-<div>
+<div id="options-container" class="light-blue-text text-lighten-5">
+  {{#each navOptions}}
+    <div>{{optionName}}</div>
+  {{/each}}
 </div>

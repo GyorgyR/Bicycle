@@ -67,7 +67,8 @@
     <div class="nav-title">{{title}}</div>
     <div class="nav-options">
       {{#each options}}
-        <div class="nav-menu">{{name}}</div>
+        <div class="nav-menu {{#if isActive}}active{{/if}} {{#if wasActive}}was-active{{/if}}"
+             data-option="{{name}}">{{name}}</div>
       {{/each}}
     </div>
   </section>
