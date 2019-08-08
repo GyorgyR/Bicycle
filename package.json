@@ -9,10 +9,10 @@
     "copy": "cp src/*.html src/*.ico src/*.json dist && cp src/script/lib/*.min.js dist/script/lib",
     "watch-copy": "npm-watch copy &",
     "hbs": "for f in src/handlebars/*.hbs; do handlebars $f -f $f.js -m -a; done; npm run ts",
-    "watch-hbs": "npm-watch hbs",
+    "watch-hbs": "npm-watch hbs &",
     "mkdirs": "mkdir -p dist/script/lib && mkdir -p dist/handlebars",
     "build": "npm run mkdirs && npm run copy && npm run hbs && npm run ts",
-    "start": "npm run watch-copy && npm run watch-ts && npm run server",
+    "start": "npm run watch-copy && npm run watch-ts && npm run watch-hbs && npm run server",
     "stop": "killall node",
     "clean": "rm -rf dist"
   },
