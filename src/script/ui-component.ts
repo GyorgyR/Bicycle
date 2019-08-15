@@ -74,9 +74,9 @@ export abstract class UiComponent {
         this.state = newState;
     }
 
-    public setBatchState(operations: Function): void {
+    public setBatchState(operations: (state: any) => void): void {
         this.watchState = false;
-        operations();
+        operations(this.state);
         this.render();
         this.watchState = true;
     }
@@ -125,6 +125,7 @@ export abstract class UiComponent {
             this.createShadowContainer();
         }
 
+        console.log('render', this.constructor.name);
         this.shadowRoot.innerHTML = this.template(this.state);
         this.bindAllHandlers();
     }

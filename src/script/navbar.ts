@@ -34,7 +34,7 @@ export class NavBar extends UiComponent {
             .getAttribute('data-option');
         let activeList: INavOptionState | null = null;
 
-        this.setBatchState(() => this.state
+        this.setBatchState((state) => state
             .options
             .forEach((option) => {
                 option.wasActive = option.isActive;
@@ -50,6 +50,7 @@ export class NavBar extends UiComponent {
         this.navOption.setState(activeList);
     }
 
+    // Remove class after animation ended otherwise the animation could play randomly
     @eventHandler('div.nav-menu', 'animationend')
     private removeWasAnim(e: Event) {
         (e.target as HTMLElement).classList.remove('was-active');
