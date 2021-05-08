@@ -55,7 +55,7 @@
   "devDependencies": {
     "@types/handlebars": "^4.1.0",
     "google-closure-compiler": "^20190709.0.0",
-    "handlebars": "^4.7.1",
+    "handlebars": "^4.7.7",
     "live-server": "^1.2.1",
     "npm-watch": "^0.6.0",
     "tslib": "^1.10.0",
